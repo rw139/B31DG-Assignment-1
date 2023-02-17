@@ -1,18 +1,24 @@
-//ward 4,1,9,4    rem(4/4)+1 = mode 1
-#define a 400     //4*100uS
-#define b 100     //1*100uS
-#define c 13      //9+4
-#define d 2000    //4*500uS
-#define reg 50    //regular interval 50uS
-#define s1 34     //switch 1 pin 
-#define s2 14     //switch 2 pin 
-#define sigA 2    //signalA pin 
-#define sigB 5    //signalB pin 
+//defining delay and pulse number parameters
 
+//ward 4,1,9,4      rem(4/4)+1 = mode 1
+#define a 400       //4*100uS
+#define b 100       //1*100uS
+#define c 13        //9+4
+#define d 2000      //4*500uS
+#define reg 50      //regular interval 50uS
+
+//defining constant input and output pins
+const int s1 = 1;   //switch 1 pin
+const int s2 = 2;   //switch 2 pin
+const int sigA = 4; //signal A pin
+const int sigB = 6; //signal B pin
+
+//integers used later for checking switch states and altering pulse number for Mode 1
 int pulse;
 int s1State;
 int s2State;
 
+//setup function
 void setup() {
 
   //initialise input pins for switch 1 and 2
@@ -24,12 +30,14 @@ void setup() {
   pinMode(sigB,OUTPUT);
 }
 
+//main loop
 void loop() {
+
   //read switch high or low
   s1State = digitalRead(s1);
   s2State = digitalRead(s2);
 
-  //switch 2 high - enable mode 1 signal
+  //switch 2 high - enable mode 1 signal (pulse number - 3)
   if(s2State == HIGH){
     pulse = c-3;
     SigAB();
@@ -40,21 +48,25 @@ void loop() {
     pulse = c;
     SigAB();
   } 
+  //s1State == HIGH not defined, meaning a HIGH state will do nothing, ie will disable pulse stream
 }
 
 //signal A and B
 void SigAB(){
-  //signal B
+  
+  //signal B initial pulse
   digitalWrite(sigB, HIGH);
   delay(reg);
   digitalWrite(sigB, LOW); 
-  //signal A
+  
+  //signal A for loop
   for(int i = 0; i < pulse; i++){
     digitalWrite(sigA, HIGH);
     delay(a+reg*i);
     digitalWrite(sigA, LOW);
     delay(b);   
    }
+
   //delay d between cycles 
   delay(d);
 }
